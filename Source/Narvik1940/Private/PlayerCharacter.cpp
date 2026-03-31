@@ -3,6 +3,7 @@
 
 #include "PlayerCharacter.h"
 #include "WeaponSMG.h"
+#include "NarvikGameInstance.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
@@ -40,6 +41,12 @@ void APlayerCharacter::MovementSet()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UNarvikGameInstance* GI = Cast<UNarvikGameInstance>(GetGameInstance());
+	if (GI)
+	{
+		PlayerTeam = GI->SelectedTeam;
+	}
 
 	FPSCamera->AttachToComponent(ArmsMesh, FAttachmentTransformRules::SnapToTargetIncludingScale,
 		TEXT("CameraSocket"));

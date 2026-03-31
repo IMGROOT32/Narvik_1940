@@ -6,6 +6,7 @@
 #include "CharacterBase.h"
 #include "WeaponBase.h"
 #include "InputActionValue.h"
+#include "NarvikTeam.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputAction;
@@ -140,6 +141,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	bool bIsSprinting = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Team")
+	ETeam PlayerTeam = ETeam::British;
 
 	AWeaponBase* GetCurrentWeapon() const { return CurrentWeapon; }
 

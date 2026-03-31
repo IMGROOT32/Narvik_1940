@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -25,6 +25,7 @@ public class Narvik1940 : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"Narvik1940",
+			"Narvik1940/AI",
 			"Narvik1940/Variant_Horror",
 			"Narvik1940/Variant_Horror/UI",
 			"Narvik1940/Variant_Shooter",
