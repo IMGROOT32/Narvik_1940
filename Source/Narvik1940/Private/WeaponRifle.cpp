@@ -5,6 +5,8 @@
 #include "PlayerCharacter.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "AI/AICharacterBase.h"
+#include "CharacterBase.h"
 
 AWeaponRifle::AWeaponRifle()
 {
@@ -54,6 +56,22 @@ void AWeaponRifle::Fire()
 	if (bHit)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Hit : %s"), *HitResult.GetActor()->GetName());
+
+		AAICharacterBase* HitAI = Cast<AAICharacterBase>(HitResult.GetActor());
+		if (HitAI)
+		{
+			FName BoneName = HitResult.BoneName;
+			EBodyPart BodyPart = EBodyPart::Chest;
+
+			if (BoneName == "head") BodyPart = EBodyPart::Head;
+			else if (BoneName == "upperarm_l" || BoneName == "lowerarm_l") BodyPart = EBodyPart::LeftArm;
+			else if (BoneName == "upperarm_r" || BoneName == "lowerarm_r") BodyPart = EBodyPart::RightArm;
+			else if (BoneName == "thigh_l" || BoneName == "calf_l") BodyPart = EBodyPart::LeftLeg;
+			else if (BoneName == "thigh_r" || BoneName == "calf_r") BodyPart = EBodyPart::RightLeg;
+
+			HitAI->TakeDamageByPart(BodyPart, Damage);
+			UE_LOG(LogTemp, Warning, TEXT("Bone: %s, Damage: %.1f"), *BoneName.ToString(), Damage);
+		}
 
 		if (bShowDebugTrace)
 		{

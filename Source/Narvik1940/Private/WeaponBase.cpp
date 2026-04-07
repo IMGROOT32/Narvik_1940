@@ -67,3 +67,12 @@ void AWeaponBase::FinishReload()
 	bIsReloading = false;
 	UE_LOG(LogTemp, Warning, TEXT("Reload Complete : Ammo : %d / %d"), CurrentAmmo, ReserveAmmo)
 }
+
+FVector AWeaponBase::GetScopeSocketLocation() const
+{
+	if (WeaponSkeletalMesh)
+	{
+		return WeaponSkeletalMesh->GetSocketLocation(TEXT("ScopeSocket"));
+	}
+	return FVector::ZeroVector;
+}

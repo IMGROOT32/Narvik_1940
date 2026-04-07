@@ -90,6 +90,8 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<UAnimInstance> WeaponAnimClass;
+	
+	FVector GetScopeSocketLocation() const;
 
 	virtual void OnEquip();
 	virtual void OnUnEquip();

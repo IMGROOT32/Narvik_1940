@@ -30,7 +30,7 @@ void APlayerCharacter::MeshSet()
 	ArmsMesh->bCastDynamicShadow = false;
 	ArmsMesh->CastShadow = false;
 	ArmsMesh->SetOnlyOwnerSee(true);
-	GetMesh()->SetOwnerNoSee(true);
+	GetMesh()->SetOwnerNoSee(false);
 }
 
 void APlayerCharacter::MovementSet()
@@ -48,7 +48,7 @@ void APlayerCharacter::BeginPlay()
 		PlayerTeam = GI->SelectedTeam;
 	}
 
-	FPSCamera->AttachToComponent(ArmsMesh, FAttachmentTransformRules::SnapToTargetIncludingScale,
+	FPSCamera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale,
 		TEXT("CameraSocket"));
 	FPSCamera->SetFieldOfView(DefaultFOV);
 
@@ -76,6 +76,9 @@ void APlayerCharacter::BeginPlay()
 	{
 		EquipWeapon(SecondaryWeapon);
 	}
+
+	DefaultCameraOffset = FPSCamera->GetRelativeLocation();
+	UE_LOG(LogTemp, Warning, TEXT("DefaultCameraOffset : %s"), *DefaultCameraOffset.ToString());
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -172,11 +175,11 @@ void APlayerCharacter::EquipWeapon(AWeaponBase* Weapon)
 	CurrentWeapon = Weapon;
 
 	FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, true);
-	CurrentWeapon->AttachToComponent(ArmsMesh, Rules, TEXT("hand_r_socket"));
+	CurrentWeapon->AttachToComponent(GetMesh(), Rules, TEXT("hand_r_socket"));
 
 	if (Weapon->WeaponAnimClass)
 	{
-		ArmsMesh->SetAnimInstanceClass(Weapon->WeaponAnimClass);
+		GetMesh()->SetAnimInstanceClass(Weapon->WeaponAnimClass);
 	}
 	CurrentWeapon->OnEquip();
 }
@@ -281,8 +284,7 @@ void APlayerCharacter::AimSway()
 void APlayerCharacter::ADSStart(const FInputActionValue& Value)
 {
 	bIsADS = true;
-	GetWorldTimerManager().SetTimer(ADSTimer, this, &APlayerCharacter::UpdateADS,
-		0.016f, true);
+	GetWorldTimerManager().SetTimer(ADSTimer, this, &APlayerCharacter::UpdateADS, 0.016f, true);
 }
 
 void APlayerCharacter::ADSEnd(const FInputActionValue& Value)
@@ -292,15 +294,14 @@ void APlayerCharacter::ADSEnd(const FInputActionValue& Value)
 
 void APlayerCharacter::UpdateADS()
 {
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
-	float TargetFOV = bIsADS ? ADSFOV : DefaultFOV;
+    float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-	float CurrentFOV = FPSCamera->FieldOfView;
-	float NewFOV = FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, ADSSpeed);
-	FPSCamera->SetFieldOfView(NewFOV);
+    float TargetFOV = bIsADS ? ADSFOV : DefaultFOV;
+    float CurrentFOV = FPSCamera->FieldOfView;
+    FPSCamera->SetFieldOfView(FMath::FInterpTo(CurrentFOV, TargetFOV, DeltaTime, ADSSpeed));
 
-	if (!bIsADS && FMath::IsNearlyEqual(CurrentFOV, NewFOV, 0.1f))
-	{
-		GetWorldTimerManager().ClearTimer(ADSTimer);
-	}
+    if (!bIsADS && FMath::IsNearlyEqual(CurrentFOV, DefaultFOV, 0.1f))
+    {
+        GetWorldTimerManager().ClearTimer(ADSTimer);
+    }
 }

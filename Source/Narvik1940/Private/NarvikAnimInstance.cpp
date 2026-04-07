@@ -14,8 +14,7 @@ void UNarvikAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (MeshComp)
 		{
 			OwnerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-			UE_LOG(LogTemp, Warning, TEXT("OwnerCharacter : %s"),
-				OwnerCharacter ? TEXT("Found") : TEXT("NULL"))
+		
 		}
 	}
 

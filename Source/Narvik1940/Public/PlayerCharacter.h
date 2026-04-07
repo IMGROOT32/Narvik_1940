@@ -107,6 +107,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "ADS")
 	UInputAction* IA_ADS;
 
+	FVector DefaultCameraOffset;
+
 	void CameraSet();
 	void MeshSet();
 	void MovementSet();
