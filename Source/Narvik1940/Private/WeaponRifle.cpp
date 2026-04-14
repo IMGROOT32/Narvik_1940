@@ -39,18 +39,27 @@ void AWeaponRifle::Fire()
 	APlayerController* PC = Cast<APlayerController>(GetOwner()->GetInstigatorController());
 	if (!PC) return;
 
-	FVector CameraLocation;
-	FRotator CameraRotation;
-	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
+	int32 ViewportX, ViewportY;
+	PC->GetViewportSize(ViewportX, ViewportY);
 
-	FVector TraceEnd = CameraLocation + CameraRotation.Vector() * Range;
+	FVector WorldLocation, WorldDirection;
+	PC->DeprojectScreenPositionToWorld(
+		ViewportX / 2.0f, ViewportY / 2.0f,
+		WorldLocation, WorldDirection);
+
+	float SpreadX = FMath::RandRange(-SpreadAngle, SpreadAngle);
+	float SpreadY = FMath::RandRange(-SpreadAngle, SpreadAngle);
+	WorldDirection = WorldDirection.RotateAngleAxis(SpreadX, FVector::UpVector);
+	WorldDirection = WorldDirection.RotateAngleAxis(SpreadY, FVector::RightVector);
+
+	FVector TraceEnd = WorldLocation + WorldDirection * Range;
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 	Params.AddIgnoredActor(GetOwner());
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation, TraceEnd,
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, WorldLocation, TraceEnd,
 		ECC_Visibility, Params);
 
 	if (bHit)
@@ -75,7 +84,7 @@ void AWeaponRifle::Fire()
 
 		if (bShowDebugTrace)
 		{
-			DrawDebugLine(GetWorld(), CameraLocation, HitResult.ImpactPoint, FColor::Blue,
+			DrawDebugLine(GetWorld(), WorldLocation, HitResult.ImpactPoint, FColor::Blue,
 				false, 2.0f, 0, 1.0f);
 		}
 	}
@@ -83,7 +92,7 @@ void AWeaponRifle::Fire()
 	{
 		if (bShowDebugTrace)
 		{
-			DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red);
+			DrawDebugLine(GetWorld(), WorldLocation, TraceEnd, FColor::Red);
 		}
 	}
 }

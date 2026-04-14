@@ -2,7 +2,6 @@
 
 
 #include "AI/AICharacterBase.h"
-#include "AI/NarvikAIController.h"
 #include "PlayerCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -38,20 +37,15 @@ void AAICharacterBase::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	if (!Actor || !bIsAlive) return;
 	if (!IsEnemy(Actor)) return;
-
-	ANarvikAIController* AIC = Cast<ANarvikAIController>(GetController());
-	if (!AIC) return;
 	
 	if (Stimulus.WasSuccessfullySensed())
 	{
 		TargetActor = Actor;
-		AIC->SetTargetActor(Actor);
 		UE_LOG(LogTemp, Warning, TEXT("AI : Enemy Detected - %s"), *Actor->GetName());
 	}
 	else
 	{
 		TargetActor = nullptr;
-		AIC->SetTargetActor(nullptr);
 		UE_LOG(LogTemp, Warning, TEXT("AI : Enemy Lost"));
 	}
 }

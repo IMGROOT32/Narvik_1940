@@ -14,7 +14,6 @@ void UNarvikAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (MeshComp)
 		{
 			OwnerCharacter = Cast<APlayerCharacter>(MeshComp->GetOwner());
-		
 		}
 	}
 
@@ -24,6 +23,19 @@ void UNarvikAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsInAir = OwnerCharacter->GetCharacterMovement()->IsFalling();
 	bIsFiring = OwnerCharacter->bIsFiring;
 	bIsReloading = OwnerCharacter->GetCurrentWeapon() ?
-		OwnerCharacter->GetCurrentWeapon()->GetIsReloading() : false;
+				   OwnerCharacter->GetCurrentWeapon()->GetIsReloading() : false;
 	bIsSprinting = OwnerCharacter->bIsSprinting;
+
+	if (OwnerCharacter->GetCurrentWeapon())
+	{
+		USkeletalMeshComponent* WeaponMesh =
+			OwnerCharacter->GetCurrentWeapon()->GetWeaponSkeletalMesh();
+		if (WeaponMesh)
+		{
+			LeftHandTransform = WeaponMesh->GetSocketTransform(TEXT("LeftHandSocket"), RTS_World);
+		}
+	}
+
+	float RawPitch = OwnerCharacter->GetControlRotation().Pitch;
+	AimPitch = RawPitch > 180.f ? RawPitch - 360.f : RawPitch;
 }

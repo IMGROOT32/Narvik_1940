@@ -7,6 +7,7 @@
 #include "WeaponBase.h"
 #include "InputActionValue.h"
 #include "NarvikTeam.h"
+#include "Blueprint/UserWidget.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputAction;
@@ -108,6 +109,12 @@ protected:
 	UInputAction* IA_ADS;
 
 	FVector DefaultCameraOffset;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> CrosshairWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* CrosshairWidget;
 
 	void CameraSet();
 	void MeshSet();

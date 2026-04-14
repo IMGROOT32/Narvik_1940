@@ -33,6 +33,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Anim")
 	bool bIsSprinting = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Anim")
+	FTransform LeftHandTransform;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Anim")
+	float AimPitch = 0.0f;
+
 private:
 	UPROPERTY()
 	class APlayerCharacter* OwnerCharacter;

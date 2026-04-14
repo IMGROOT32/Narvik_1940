@@ -62,6 +62,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FVector WeaponScale = FVector(1.0f, 1.0f, 1.0f);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	bool bRequiresBothArms = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float SpreadAngle = 0.5f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Ammo")
 	int32 MagazineSize = 30;
 
@@ -71,15 +77,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ammo")
 	int32 ReserveAmmo = 0;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	bool bRequiresBothArms = true;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Ammo")
 	bool bIsReloading = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Ammo")
 	float ReloadTime = 1.5f;
 	FTimerHandle ReloadTimer;
+
+	UPROPERTY(EditDefaultsOnly, Category = "ADS")
+	FVector ADSCameraOffset = FVector(5.0f, 5.0f, 5.0f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "ADS")
+	bool bHasScope = false;
+
+	UPROPERTY(EditDefaultsOnly, Category = "ADS")
+	float ScopeFOV = 40.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 	bool bShowDebugTrace = true;
@@ -92,6 +104,8 @@ public:
 	TSubclassOf<UAnimInstance> WeaponAnimClass;
 	
 	FVector GetScopeSocketLocation() const;
+	FVector GetADSCameraOffset() const { return ADSCameraOffset; }
+	USkeletalMeshComponent* GetWeaponSkeletalMesh() const { return WeaponSkeletalMesh; }
 
 	virtual void OnEquip();
 	virtual void OnUnEquip();
@@ -106,4 +120,6 @@ public:
 	bool GetIsReloading() const { return bIsReloading; }
 	float GetRecoilPitch() const { return WeaponRecoilPitch; }
 	float GetRecoilYaw() const { return WeaponRecoilYaw; }
+	bool GetHasScope() const { return bHasScope; }
+	float GetScopeFOV() const { return ScopeFOV; }
 };

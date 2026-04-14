@@ -31,10 +31,3 @@ void ANarvikAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-void ANarvikAIController::SetTargetActor(AActor* Target)
-{
-	if (Blackboard)
-	{
-		Blackboard->SetValueAsObject(TargetActorKey, Target);
-	}
-}

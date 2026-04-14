@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 
+
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -79,6 +80,15 @@ void APlayerCharacter::BeginPlay()
 
 	DefaultCameraOffset = FPSCamera->GetRelativeLocation();
 	UE_LOG(LogTemp, Warning, TEXT("DefaultCameraOffset : %s"), *DefaultCameraOffset.ToString());
+
+	if (CrosshairWidgetClass)
+	{
+		CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
+		if (CrosshairWidget)
+		{
+			CrosshairWidget->AddToViewport();
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -283,13 +293,29 @@ void APlayerCharacter::AimSway()
 
 void APlayerCharacter::ADSStart(const FInputActionValue& Value)
 {
+	if (!CurrentWeapon) return;
+
 	bIsADS = true;
-	GetWorldTimerManager().SetTimer(ADSTimer, this, &APlayerCharacter::UpdateADS, 0.016f, true);
+	DefaultCameraOffset = FPSCamera->GetRelativeLocation();
+
+	if (CurrentWeapon->GetHasScope())
+	{
+		ADSFOV = CurrentWeapon->GetScopeFOV();
+	}
+	else
+	{
+		bIsADS = false;
+		return;
+	}
+	
+	GetWorldTimerManager().SetTimer(
+		ADSTimer, this, &APlayerCharacter::UpdateADS, 0.016f, true);
 }
 
 void APlayerCharacter::ADSEnd(const FInputActionValue& Value)
 {
 	bIsADS = false;
+	FPSCamera->SetRelativeLocation(DefaultCameraOffset);
 }
 
 void APlayerCharacter::UpdateADS()
